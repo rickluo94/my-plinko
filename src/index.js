@@ -162,7 +162,15 @@ const ground = Bodies.rectangle(width / 2, height + 22, width * 2, 40, {
   isStatic: true,
   label: "Ground"
 });
-Composite.add(engine.world, [ground]);
+var wallLeft = Bodies.rectangle(0, height / 2, 60, height, {
+  isStatic: true,
+  label: "Wall Left"
+});
+var wallRight = Bodies.rectangle(width, height / 2, 60, height, {
+  isStatic: true,
+  label: "Wall Right"
+});
+Composite.add(engine.world, [ground, wallLeft, wallRight]);
 function checkCollision(event, label1, label2, callback) {
   event.pairs.forEach(({
     bodyA,
