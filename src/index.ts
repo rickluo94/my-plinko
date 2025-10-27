@@ -65,8 +65,8 @@ wildEl.innerHTML = 1;
 
 const multiplierSets = {
     1: [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50], // 標準
-    2: [50, 40, 14, 8, 1, 0, 0, 0, 0, 0, 0, 0, 1, 8, 14, 40, 50], // 加倍版
-    3: [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200]  // 高風險高報酬
+    2: [100, 0, 14, 8, 1, 0, 0, 0, 0, 0, 0, 0, 1, 8, 14, 0, 100], // 加倍版
+    3: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200]  // 高風險高報酬
 };
 
 let multipliers = [...multiplierSets[1]];
@@ -224,8 +224,9 @@ Matter.Events.on(engine, "collisionStart", (event) => {
             );
             if (index >= 0 && index < 17) {
                 // Register ball
-                const ballsWon = Math.floor(multipliers[index] * wild);
+                const ballsWon = Math.floor(multipliers[index]);
                 balls += ballsWon;
+                console.log(`ballsWon = ${ballsWon}`);
                 // Ball hit note at bottom
                 const el = document.getElementById(`note-${index}`);
                 if (el.dataset.pressed !== "true") {
