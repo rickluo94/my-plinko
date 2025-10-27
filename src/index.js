@@ -15,11 +15,36 @@ class Note {
     return this.synth.triggerAttackRelease(this.note, "32n", Tone.context.currentTime);
   }
 }
-const multipliers = [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50];
-multipliers.forEach((m, i) => document.getElementById(`note-${i}`).innerHTML = m);
 
 // Create notes
 const notes = ["C#5", "C5", "B5", "A#5", "A5", "G#4", "G4", "F#4", "F4", "F#4", "G4", "G#4", "A5", "A#5", "B5", "C5", "C#5"].map(note => new Note(note));
+let wild = 1;
+const wildEl = document.getElementById("wild");
+wildEl.innerHTML = 1;
+[1, 2, 3].forEach(i => {
+  const btn = document.getElementById(`button-x${i}`);
+  btn.addEventListener("click", () => {
+    wild = i;
+    wildEl.innerHTML = i;
+    console.log("wild =", wild);
+    multipliers = [...multiplierSets[wild]];
+    // 更新畫面上的顯示
+    multipliers.forEach((m, i) => {
+      document.getElementById(`note-${i}`).innerHTML = m;
+    });
+  });
+});
+const multiplierSets = {
+  1: [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50],
+  // 標準
+  2: [50, 40, 14, 8, 1, 0, 0, 0, 0, 0, 0, 0, 1, 8, 14, 40, 50],
+  // 加倍版
+  3: [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200] // 高風險高報酬
+};
+let multipliers = [...multiplierSets[1]];
+// const multipliers = [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50];
+
+multipliers.forEach((m, i) => document.getElementById(`note-${i}`).innerHTML = m);
 let balls = 10;
 const ballsEl = document.getElementById("balls");
 
@@ -169,7 +194,7 @@ Matter.Events.on(engine, "collisionStart", event => {
       const index = Math.floor((ballToRemove.position.x - width / 2) / GAP + 17 / 2);
       if (index >= 0 && index < 17) {
         // Register ball
-        const ballsWon = Math.floor(multipliers[index]);
+        const ballsWon = Math.floor(multipliers[index] * wild);
         balls += ballsWon;
         // Ball hit note at bottom
         const el = document.getElementById(`note-${index}`);

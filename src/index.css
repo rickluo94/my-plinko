@@ -27,6 +27,24 @@ button:active {
   margin-top: 3em;
   gap: 1em;
 }
+.controls .tabs-container {
+  display: flex;
+  justify-content: center;
+}
+.controls .tabs-container .tab {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.controls .tabs-container .tab button {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 10px;
+  padding: 1em 1em 1em 1em;
+  background: lime;
+  width: 7em;
+}
 .controls .drop-container {
   display: flex;
   justify-content: center;
@@ -92,7 +110,14 @@ button:active {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+.controls .settings-container {
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  gap: 1rem;
+}
 
+#wild,
 #balls,
 #multiplier {
   position: relative;
@@ -101,6 +126,7 @@ button:active {
   margin-right: auto;
   color: rgba(255, 255, 255, 0.2);
 }
+#wild:before,
 #balls:before,
 #multiplier:before {
   content: "-";
@@ -112,6 +138,10 @@ button:active {
 
 #balls:before {
   content: "Balls";
+}
+
+#wild:before {
+  content: "Wild";
 }
 
 #multiplier {
