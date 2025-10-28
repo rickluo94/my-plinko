@@ -162,11 +162,11 @@ const ground = Bodies.rectangle(width / 2, height + 22, width * 2, 40, {
   isStatic: true,
   label: "Ground"
 });
-var wallLeft = Bodies.rectangle(0, height / 2, 60, height, {
+var wallLeft = Bodies.rectangle(0, (height - 80) / 2, 60, height, {
   isStatic: true,
   label: "Wall Left"
 });
-var wallRight = Bodies.rectangle(width, height / 2, 60, height, {
+var wallRight = Bodies.rectangle(width, (height - 80) / 2, 60, height, {
   isStatic: true,
   label: "Wall Right"
 });
