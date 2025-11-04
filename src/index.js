@@ -22,7 +22,7 @@ const notes = ["C#5", "C5", "B5", "A#5", "A5", "G#4", "G4", "F#4", "F4", "F#4", 
 let wild = 1;
 const wildEl = document.getElementById("wild");
 wildEl.innerHTML = 1;
-[1, 2, 3].forEach(i => {
+[1, 2, 3, 4].forEach(i => {
   const btn = document.getElementById(`button-x${i}`);
   btn.addEventListener("click", () => {
     wild = i;
@@ -38,11 +38,11 @@ wildEl.innerHTML = 1;
 const multiplierSets = {
   1: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
   // 標準
-  2: [100, 0, 14, 8, 1, 0, 0, 0, 0, 0, 0, 0, 1, 8, 14, 0, 100],
-  // 加倍版
-  3: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
-  // 高風險高報酬
-  4: [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50] // 標準
+  2: [8.81, 2.96, 1.38, 1.08, 0.98, 0.49, 0.49, 0.49, 0.49, 0.49, 0.49, 0.49, 0.98, 1.08, 1.38, 2.96, 8.81],
+  // 低
+  3: [21.7, 4.94, 1.97, 1.38, 0.59, 0.39, 0.39, 0.39, 0.39, 0.39, 0.39, 0.39, 0.59, 1.38, 1.97, 4.94, 21.7],
+  // 中
+  4: [75.2, 9.89, 2.96, 0.89, 0.29, 0.19, 0.19, 0.19, 0.19, 0.19, 0.19, 0.19, 0.29, 0.89, 2.96, 9.89, 75.2] // 高
 };
 let multipliers = [...multiplierSets[1]];
 // const multipliers = [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50];
@@ -710,12 +710,14 @@ function dropABall() {
   const dropLeft = width / 2 - GAP;
   const dropRight = width / 2 + GAP;
   const dropWidth = dropRight - dropLeft;
-  // const x = Math.random() * dropWidth + dropLeft;
-  // const y = -PEG_RAD;
+  const x = Math.random() * dropWidth + dropLeft;
+  const y = -PEG_RAD;
 
-  const x = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].x;
-  const y = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].y;
-  console.log(`x: ${x}, y: ${y}`);
+  // const x = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].x;
+  // const y = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].y;
+
+  // console.log(`x: ${x}, y: ${y}`);
+
   const ball = Bodies.circle(x, y, BALL_RAD, {
     label: "Ball",
     restitution: 0.6,
@@ -795,14 +797,29 @@ const ground = Bodies.rectangle(width / 2, height + 22, width * 2, 40, {
   isStatic: true,
   label: "Ground"
 });
-var wallLeft = Bodies.rectangle(0, (height - 80) / 2, 60, height, {
+var wallLeftTop = Bodies.rectangle(70, (height - 530) / 2, 10, height, {
   isStatic: true,
   label: "Wall Left"
 });
-var wallRight = Bodies.rectangle(width, (height - 80) / 2, 60, height, {
+var wallRightTop = Bodies.rectangle(width - 70, (height - 530) / 2, 10, height, {
   isStatic: true,
   label: "Wall Right"
 });
+var wallLeft = Bodies.rectangle(-60, (height - 20) / 2, 10, height, {
+  isStatic: true,
+  label: "Wall Left"
+});
+var wallRight = Bodies.rectangle(width + 60, (height - 20) / 2, 10, height, {
+  isStatic: true,
+  label: "Wall Right"
+});
+
+// here how to rotate it:
+Matter.Body.rotate(wallLeftTop, Math.PI / -9);
+Matter.Body.rotate(wallRightTop, Math.PI / 9);
+Matter.Body.rotate(wallLeft, Math.PI / -9);
+Matter.Body.rotate(wallRight, Math.PI / 9);
+Composite.add(engine.world, [ground, wallLeftTop, wallRightTop]);
 Composite.add(engine.world, [ground, wallLeft, wallRight]);
 function checkCollision(event, label1, label2, callback) {
   event.pairs.forEach(({
@@ -837,18 +854,18 @@ Matter.Events.on(engine, "collisionStart", event => {
         // Register ball
         const ballsWon = Math.floor(multipliers[index]);
         balls += ballsWon;
-        console.log(`ballsWon = ${ballsWon}`);
+        console.log(`index = ${index} ,ballsWon = ${ballsWon}, balls = ${balls}`);
 
         // ✅ 取出初始 x/y 與結果紀錄下來
-        const seedRecord = {
-          x: ballToRemove.initialPosition?.x ?? null,
-          y: ballToRemove.initialPosition?.y ?? null,
-          ballsWon,
-          index,
-          timestamp: new Date().toISOString()
-        };
-        recordedSeeds.push(seedRecord);
-        console.table(recordedSeeds);
+        // const seedRecord = {
+        //     x: ballToRemove.initialPosition?.x ?? null,
+        //     y: ballToRemove.initialPosition?.y ?? null,
+        //     ballsWon,
+        //     index,
+        //     timestamp: new Date().toISOString()
+        // };
+        // recordedSeeds.push(seedRecord);
+        // console.table(recordedSeeds);
 
         // ✅ 若想要自動輸出 JSON，可在 console 複製用
         //console.log("JSON:", JSON.stringify(recordedSeeds, null, 2));
