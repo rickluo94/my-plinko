@@ -997,11 +997,11 @@ var wallRightTop = Bodies.rectangle(width-70, (height - 530) / 2, 10, height, {
     isStatic: true, label: "Wall Right"
 });
 
-var wallLeft = Bodies.rectangle(-60, (height - 20) / 2, 10, height, {
+var wallLeft = Bodies.rectangle(-57, (height - 100) / 2, 10, height, {
     isStatic: true, label: "Wall Left"
 });
 
-var wallRight = Bodies.rectangle(width + 60, (height - 20) / 2, 10, height, {
+var wallRight = Bodies.rectangle(width + 57, (height - 100) / 2, 10, height, {
     isStatic: true, label: "Wall Right"
 });
 
