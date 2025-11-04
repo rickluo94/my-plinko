@@ -30,20 +30,20 @@ button {
 
   .tabs-container {
     display: flex;
-    justify-content: center;
+    justify-content: left;
 
     .tab {
       position: relative;
       display: inline-flex;
       flex-direction: column;
-      gap: 0.2em;
+      gap: 0.3em;
 
       button {
         flex-shrink: 0;
         border: none;
         border-radius: 10px;
         padding: 1em 1em 1em 1em;
-        background: lime;
+        background: rgba(255, 255, 255, 0.3);
         width: 7em;
       }
     }

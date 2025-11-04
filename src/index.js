@@ -48,7 +48,7 @@ let multipliers = [...multiplierSets[1]];
 // const multipliers = [50, 20, 7, 4, 3, 1, 1, 0, 0, 0, 1, 1, 3, 4, 7, 20, 50];
 
 multipliers.forEach((m, i) => document.getElementById(`note-${i}`).innerHTML = m);
-let balls = 10;
+let balls = 12;
 const ballsEl = document.getElementById("balls");
 
 // Click noise synth when clicking drop
@@ -699,26 +699,11 @@ const preSimulatedSeeds = [{
   index: 11,
   timestamp: "2025-10-28T05:40:34.538Z"
 }];
+let shot;
 
-// Drop a ball
-const BALL_RAD = 7;
-const BALL_GROUP = -1; // 負數群組代表同群體不會互相碰撞
-function dropABall() {
-  if (balls > 0) {
-    balls -= 1;
-  }
-  const dropLeft = width / 2 - GAP;
-  const dropRight = width / 2 + GAP;
-  const dropWidth = dropRight - dropLeft;
-  const x = Math.random() * dropWidth + dropLeft;
-  const y = -PEG_RAD;
-
-  // const x = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].x;
-  // const y = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].y;
-
-  // console.log(`x: ${x}, y: ${y}`);
-
-  const ball = Bodies.circle(x, y, BALL_RAD, {
+//Shot
+function createShot() {
+  shot = Bodies.circle(width / 2, width / 2, BALL_RAD, {
     label: "Ball",
     restitution: 0.6,
     collisionFilter: {
@@ -731,14 +716,53 @@ function dropABall() {
       fillStyle: "#4cff00"
     }
   });
+  Composite.add(engine.world, shot);
+}
 
-  // ✅ 在 ball 上自訂屬性紀錄初始位置
-  ball.initialPosition = {
-    x,
-    y
-  };
-  clickSynth.triggerAttackRelease("32n", Tone.context.currentTime);
-  Composite.add(engine.world, [ball]);
+// Drop a ball
+const BALL_RAD = 7;
+const BALL_GROUP = -1; // 負數群組代表同群體不會互相碰撞
+function dropABall() {
+  if (balls < wild) {
+    createShot();
+    console.log("No Available Balls!");
+  } else {
+    balls -= wild;
+    const dropLeft = width / 2 - GAP;
+    const dropRight = width / 2 + GAP;
+    const dropWidth = dropRight - dropLeft;
+    const x = Math.random() * dropWidth + dropLeft;
+    const y = -PEG_RAD;
+
+    // const x = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].x;
+    // const y = preSimulatedSeeds.filter(x => x.ballsWon === 17)[0].y;
+
+    // console.log(`x: ${x}, y: ${y}`);
+
+    const ball = Bodies.circle(x, y, BALL_RAD, {
+      label: "Ball",
+      restitution: 1,
+      stiffness: 0.05,
+      // 彈性
+      collisionFilter: {
+        group: BALL_GROUP,
+        // ✅ 關鍵設定
+        category: 0x0002,
+        mask: 0x0001 | 0x0004 // 可選：只讓它與 Peg / Ground 互動
+      },
+      render: {
+        fillStyle: "#4cff00"
+      }
+    });
+
+    // ✅ 在 ball 上自訂屬性紀錄初始位置
+    ball.initialPosition = {
+      x,
+      y
+    };
+    clickSynth.triggerAttackRelease("32n", Tone.context.currentTime);
+    Composite.add(engine.world, [ball]);
+  }
 }
 
 // module aliases
