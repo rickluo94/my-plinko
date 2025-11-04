@@ -859,7 +859,14 @@ function shotABall() {
         console.log("No Available Balls!");
     }else{
         balls -= wild;
-        shot =  Bodies.circle(150, 100, BALL_RAD, {
+
+        const shotLeft = 150;
+        const shotRight = 160;
+        const shotWidth = shotRight - shotLeft;
+        const x = Math.random() * shotWidth + shotLeft;
+        const y = 100;
+
+        shot =  Bodies.circle(x,  y, BALL_RAD, {
             label: "Ball",
             restitution: 0.6,
             collisionFilter: {
@@ -875,7 +882,7 @@ function shotABall() {
         clickSynth.triggerAttackRelease("32n", Tone.context.currentTime);
         Composite.add(engine.world, shot);
         // 給予 ｙ軸加速度
-        Body.applyForce( shot, {x: shot.position.x, y:  shot.position.y}, {x: 0, y: -0.003});
+        Body.applyForce( shot, {x: shot.position.x, y:  shot.position.y}, {x: Math.random() * 0.002, y: -0.003});
     }
 }
 
