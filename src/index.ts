@@ -87,9 +87,11 @@ const clickSynth = new Tone.NoiseSynth({ volume: -26 }).toDestination();
 
 // Drop button
 const dropButton = document.getElementById("drop-button");
+const shotButton = document.getElementById("shot-button");
 const autoDropCheckbox = document.getElementById("checkbox");
 let autoDropEnabled = false;
 let autoDroppingInterval = null;
+
 dropButton.addEventListener("click", () => {
     if (autoDropEnabled && autoDroppingInterval) {
         dropButton.innerHTML = "Start";
@@ -101,6 +103,19 @@ dropButton.addEventListener("click", () => {
         autoDroppingInterval = setInterval(dropABall, 600);
     } else if (!autoDropEnabled) {
         dropABall();
+    }
+});
+shotButton.addEventListener("click", () => {
+    if (autoDropEnabled && autoDroppingInterval) {
+        shotButton.innerHTML = "Start";
+        clearInterval(autoDroppingInterval);
+        autoDroppingInterval = null;
+    } else if (autoDropEnabled && !autoDroppingInterval) {
+        shotButton.innerHTML = "Stop";
+        shotABall();
+        autoDroppingInterval = setInterval(shotABall, 600);
+    } else if (!autoDropEnabled) {
+        shotABall();
     }
 });
 autoDropCheckbox.addEventListener("input", (e) => {
@@ -117,6 +132,7 @@ autoDropCheckbox.addEventListener("input", (e) => {
         autoDroppingInterval = null;
     }
 });
+
 
 const preSimulatedSeeds = [
     {
@@ -838,9 +854,12 @@ const preSimulatedSeeds = [
 let shot;
 
 // 射出球體
-function createShot() {
-
-    shot =  Bodies.circle(150, 100, BALL_RAD, {
+function shotABall() {
+    if (balls < wild) {
+        console.log("No Available Balls!");
+    }else{
+        balls -= wild;
+        shot =  Bodies.circle(150, 100, BALL_RAD, {
             label: "Ball",
             restitution: 0.6,
             collisionFilter: {
@@ -853,9 +872,11 @@ function createShot() {
             }
         });
 
-    Composite.add(engine.world, shot);
-    // 給予 ｙ軸加速度
-    Body.applyForce( shot, {x: shot.position.x, y:  shot.position.y}, {x: 0, y: -0.003});
+        clickSynth.triggerAttackRelease("32n", Tone.context.currentTime);
+        Composite.add(engine.world, shot);
+        // 給予 ｙ軸加速度
+        Body.applyForce( shot, {x: shot.position.x, y:  shot.position.y}, {x: 0, y: -0.003});
+    }
 }
 
 
@@ -864,7 +885,6 @@ const BALL_RAD = 7;
 const BALL_GROUP = -1; // 負數群組代表同群體不會互相碰撞
 function dropABall() {
     if (balls < wild) {
-        createShot();
         console.log("No Available Balls!");
     }else{
         balls -= wild;
