@@ -837,9 +837,10 @@ const preSimulatedSeeds = [
 
 let shot;
 
-//Shot
+// 射出球體
 function createShot() {
-    shot =  Bodies.circle(width/2, width/2, BALL_RAD, {
+
+    shot =  Bodies.circle(150, 100, BALL_RAD, {
             label: "Ball",
             restitution: 0.6,
             collisionFilter: {
@@ -853,6 +854,8 @@ function createShot() {
         });
 
     Composite.add(engine.world, shot);
+    // 給予 ｙ軸加速度
+    Body.applyForce( shot, {x: shot.position.x, y:  shot.position.y}, {x: 0, y: -0.003});
 }
 
 
@@ -905,6 +908,7 @@ const Engine = Matter.Engine,
     Render = Matter.Render,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
+    Body = Matter.Body;
     Composite = Matter.Composite;
 
 // create an engine
