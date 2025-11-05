@@ -56,6 +56,7 @@ button {
     .drop {
       position: relative;
       display: inline-flex;
+      gap: 0.3em;
 
       button {
         flex-shrink: 0;

@@ -79,11 +79,16 @@ multipliers.forEach(
     (m, i) => (document.getElementById(`note-${i}`).innerHTML = m)
 );
 
-let balls = 12;
+let balls = 24;
 const ballsEl = document.getElementById("balls");
 
 // Click noise synth when clicking drop
 const clickSynth = new Tone.NoiseSynth({ volume: -26 }).toDestination();
+
+const resetButton = document.getElementById("reset-button");
+resetButton.addEventListener("click", () => {
+    balls = 24;
+});
 
 // Drop button
 const dropButton = document.getElementById("drop-button");
@@ -94,11 +99,11 @@ let autoDroppingInterval = null;
 
 dropButton.addEventListener("click", () => {
     if (autoDropEnabled && autoDroppingInterval) {
-        dropButton.innerHTML = "Start";
+        dropButton.innerHTML = "Drop";
         clearInterval(autoDroppingInterval);
         autoDroppingInterval = null;
     } else if (autoDropEnabled && !autoDroppingInterval) {
-        dropButton.innerHTML = "Stop";
+        dropButton.innerHTML = "Stop Drop";
         dropABall();
         autoDroppingInterval = setInterval(dropABall, 600);
     } else if (!autoDropEnabled) {
@@ -107,11 +112,11 @@ dropButton.addEventListener("click", () => {
 });
 shotButton.addEventListener("click", () => {
     if (autoDropEnabled && autoDroppingInterval) {
-        shotButton.innerHTML = "Start";
+        shotButton.innerHTML = "Shot";
         clearInterval(autoDroppingInterval);
         autoDroppingInterval = null;
     } else if (autoDropEnabled && !autoDroppingInterval) {
-        shotButton.innerHTML = "Stop";
+        shotButton.innerHTML = "Stop Shot";
         shotABall();
         autoDroppingInterval = setInterval(shotABall, 600);
     } else if (!autoDropEnabled) {
@@ -122,9 +127,11 @@ autoDropCheckbox.addEventListener("input", (e) => {
     autoDropEnabled = e.target.checked;
 
     if (autoDropEnabled) {
-        dropButton.innerHTML = "Start";
+        dropButton.innerHTML = "Start Drop";
+        shotButton.innerHTML = "Start Shot";
     } else {
         dropButton.innerHTML = "Drop";
+        shotButton.innerHTML = "Shot";
     }
 
     if (autoDroppingInterval) {
@@ -868,7 +875,8 @@ function shotABall() {
 
         shot =  Bodies.circle(x,  y, BALL_RAD, {
             label: "Ball",
-            restitution: 0.6,
+            restitution: 0.6, // 球與物體碰撞後彈性
+            stiffness: 0.05, // 彈性約束（非碰撞反彈）較軟
             collisionFilter: {
                 group: BALL_GROUP, // ✅ 關鍵設定
                 category: 0x0002,
@@ -909,8 +917,8 @@ function dropABall() {
 
         const ball = Bodies.circle(x, y, BALL_RAD, {
             label: "Ball",
-            restitution: 1,
-            stiffness: 0.05, // 彈性
+            restitution: 0.6, // 球與物體碰撞後彈性
+            stiffness: 0.05, // 彈性約束（非碰撞反彈）較軟
             collisionFilter: {
                 group: BALL_GROUP, // ✅ 關鍵設定
                 category: 0x0002,
@@ -935,7 +943,7 @@ const Engine = Matter.Engine,
     Render = Matter.Render,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
-    Body = Matter.Body;
+    Body = Matter.Body,
     Composite = Matter.Composite;
 
 // create an engine
@@ -1034,61 +1042,29 @@ function checkCollision(event, label1, label2, callback) {
 
 // Trigger event on ball hitting ground
 Matter.Events.on(engine, "collisionStart", (event) => {
-    event.pairs.forEach(({ bodyA, bodyB }) => {
-        // check for ball hitting the ground
-        checkCollision(event, "Ball", "Ground", (ballToRemove) => {
-            Matter.Composite.remove(engine.world, ballToRemove);
-            const index = Math.floor(
-                (ballToRemove.position.x - width / 2) / GAP + 17 / 2
-            );
-            if (index >= 0 && index < 17) {
-                // Register ball
-                const ballsWon = Math.floor(multipliers[index]);
+    checkCollision(event, "Ball", "Ground", (ballToRemove, ground) => {
+        if (ballToRemove.hasCollided) return;
+        ballToRemove.hasCollided = true;
 
-                balls += ballsWon;
-                console.log(`index = ${index} ,ballsWon = ${ballsWon}, balls = ${balls}`);
+        Matter.Composite.remove(engine.world, ballToRemove);
+        const index = Math.floor(
+            (ballToRemove.position.x - width / 2) / GAP + 17 / 2
+        );
+        if (index >= 0 && index < 17) {
+            const ballsWon = Math.floor(multipliers[index]);
+            console.log(`balls:${balls} + ballsWon:${ballsWon}`);
+            balls += ballsWon;
+        }
+    });
 
-                // ✅ 取出初始 x/y 與結果紀錄下來
-                // const seedRecord = {
-                //     x: ballToRemove.initialPosition?.x ?? null,
-                //     y: ballToRemove.initialPosition?.y ?? null,
-                //     ballsWon,
-                //     index,
-                //     timestamp: new Date().toISOString()
-                // };
-                // recordedSeeds.push(seedRecord);
-                // console.table(recordedSeeds);
-
-                // ✅ 若想要自動輸出 JSON，可在 console 複製用
-                //console.log("JSON:", JSON.stringify(recordedSeeds, null, 2));
-
-                // Ball hit note at bottom
-                const el = document.getElementById(`note-${index}`);
-                if (el.dataset.pressed !== "true") {
-                    const note = notes[index];
-                    note.play();
-                    el.dataset.pressed = true;
-                    setTimeout(() => {
-                        el.dataset.pressed = false;
-                    }, 500);
-                }
-            }
-        });
-
-        // check for ball hitting peg
-        checkCollision(event, "Peg", "Ball", (pegToAnimate) => {
-            const index = pegs.findIndex((peg) => peg === pegToAnimate);
-            if (index === -1) {
-                throw new Error(
-                    "Could not find peg in pegs array even though we registered an ball hitting this peg"
-                );
-            }
-            if (!pegAnims[index]) {
-                pegAnims[index] = new Date().getTime();
-            }
-        });
+    checkCollision(event, "Peg", "Ball", (peg, ball) => {
+        const index = pegs.findIndex((p) => p === peg);
+        if (index !== -1 && !pegAnims[index]) {
+            pegAnims[index] = new Date().getTime();
+        }
     });
 });
+
 
 
 // run the renderer
@@ -1121,7 +1097,7 @@ function run() {
     Engine.update(engine, 1000 / 60);
 
     // Update ball count
-    ballsEl.innerHTML = balls;
+    ballsEl.innerHTML = numeral(balls)?.format("0,0.00", Math.floor)
 
     requestAnimationFrame(run);
 }

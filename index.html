@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>My Plinko</title>
     <link rel="stylesheet" href="./src/index.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.js" integrity="sha512-mqr23d0r7XRGkwhyhJHFW5KY2dKbNOgI2+3uI98xuDgZ/fJBP2vDtQ2PkUg2WJSzmyf5X6btJfAZC9F3ZPoF+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" integrity="sha512-jduERlz7En1IUZR54bqzpNI64AbffZWR//KJgF71SJ8D8/liKFZ+s1RxmUmB+bhCnIfzebdZsULwOrbVB5f3nQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -27,6 +28,7 @@
         </div>
         <div class="drop-container">
             <div class="drop">
+                <button id="reset-button" type="button">Reset</button>
                 <button id="shot-button" type="button">Shot Bet</button>
                 <button id="drop-button" type="button">Drop Bet</button>
                 <input id="checkbox" type="checkbox" />
