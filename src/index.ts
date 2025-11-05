@@ -79,7 +79,7 @@ multipliers.forEach(
     (m, i) => (document.getElementById(`note-${i}`).innerHTML = m)
 );
 
-let balls = 24;
+let balls = 1000;
 const ballsEl = document.getElementById("balls");
 
 // Click noise synth when clicking drop
@@ -87,7 +87,7 @@ const clickSynth = new Tone.NoiseSynth({ volume: -26 }).toDestination();
 
 const resetButton = document.getElementById("reset-button");
 resetButton.addEventListener("click", () => {
-    balls = 24;
+    balls = 1000;
 });
 
 // Drop button
@@ -892,7 +892,6 @@ function shotABall() {
         // 給予 ｙ軸加速度
         const yLeft = -0.0033;
         const yRight = -0.0031;
-        const yWidth = Math.abs(yRight - yLeft);
         const randomY = yLeft + Math.random() * (yRight - yLeft);
 
         const xLeft = 0.003;
@@ -1063,7 +1062,6 @@ Matter.Events.on(engine, "collisionStart", (event) => {
             const ballsWon = multipliers[index];
             console.log(`balls:${balls} + ballsWon:${ballsWon}`);
             balls += ballsWon;
-
 
             // Ball hit note at bottom
             const el = document.getElementById(`note-${index}`);
