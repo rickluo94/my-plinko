@@ -1051,7 +1051,7 @@ Matter.Events.on(engine, "collisionStart", (event) => {
             (ballToRemove.position.x - width / 2) / GAP + 17 / 2
         );
         if (index >= 0 && index < 17) {
-            const ballsWon = Math.floor(multipliers[index]);
+            const ballsWon = multipliers[index];
             console.log(`balls:${balls} + ballsWon:${ballsWon}`);
             balls += ballsWon;
         }
