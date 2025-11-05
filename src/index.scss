@@ -31,12 +31,13 @@ button {
   .tabs-container {
     display: flex;
     justify-content: left;
+    padding-top: 10px;
 
     .tab {
       position: relative;
       display: inline-flex;
       flex-direction: column;
-      gap: 0.3em;
+      gap: 0.5em;
 
       button {
         flex-shrink: 0;
@@ -44,13 +45,15 @@ button {
         border-radius: 10px;
         padding: 1em 1em 1em 1em;
         background: rgba(255, 255, 255, 0.3);
-        width: 7em;
+        width: 5em;
       }
     }
 
   }
   .drop-container {
     display: flex;
+    flex-direction: column;
+    gap: 1em;
     justify-content: center;
 
     .drop {
@@ -137,6 +140,7 @@ button {
 
 #wild,
 #balls,
+#bet,
 #multiplier {
   position: relative;
   font-weight: 900;
@@ -165,8 +169,19 @@ button {
   }
 }
 
+#bet {
+  text-align: right;
+  color: rgb(255, 255, 255);
+
+  &:before {
+    content: "Bet";
+    right: 0;
+  }
+}
+
 #multiplier {
   text-align: right;
+  color: rgb(255, 255, 255);
 
   &:before {
     content: "Drop";

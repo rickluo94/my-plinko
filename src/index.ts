@@ -46,16 +46,32 @@ const notes = [
     "C#5"
 ].map((note) => new Note(note));
 
+let bet = 1;
+const betLabel = document.getElementById("bet");
+const inputBet = document.getElementById("inputBet");
+const setBetButton = document.getElementById("setBet-button");
+
+setBetButton.addEventListener("click", () => {
+    if (balls >= inputBet.value){
+        bet = inputBet.value;
+        betLabel.innerHTML = inputBet.value;
+    }else{
+        console.log("剩餘球球不足");
+    }
+});
+
+const multiplierEl = document.getElementById("multiplier");
+
 let wild = 1;
 const wildEl = document.getElementById("wild");
-wildEl.innerHTML = 1;
-[1, 2, 3, 4].forEach(i => {
+wildEl.innerHTML = "預設";
+[1, 2, 3, 4].forEach((i, index) => {
     const btn = document.getElementById(`button-x${i}`);
     btn.addEventListener("click", () => {
         wild = i;
-        wildEl.innerHTML = i;
+        wildEl.innerHTML = ["預設","低","中", "高"][index];
 
-        console.log("wild =", wild);
+        multiplierEl.innerHTML = 1;
 
         multipliers = [...multiplierSets[wild]];
         // 更新畫面上的顯示
@@ -862,10 +878,10 @@ let shot;
 
 // 射出球體
 function shotABall() {
-    if (balls < wild) {
+    if (balls < bet) {
         console.log("No Available Balls!");
     }else{
-        balls -= wild;
+        balls -= bet;
 
         const shotLeft = 150;
         const shotRight = 170;
@@ -907,10 +923,10 @@ function shotABall() {
 const BALL_RAD = 7;
 const BALL_GROUP = -1; // 負數群組代表同群體不會互相碰撞
 function dropABall() {
-    if (balls < wild) {
+    if (balls < bet) {
         console.log("No Available Balls!");
     }else{
-        balls -= wild;
+        balls -= bet;
 
         const dropLeft = width / 2 - GAP;
         const dropRight = width / 2 + GAP;
@@ -1060,8 +1076,8 @@ Matter.Events.on(engine, "collisionStart", (event) => {
         );
         if (index >= 0 && index < 17) {
             const ballsWon = multipliers[index];
-            console.log(`balls:${balls} + ballsWon:${ballsWon}`);
-            balls += ballsWon;
+            console.log(`balls:${balls} + ballsWon:${ballsWon} * bet:${bet}`);
+            balls += ballsWon * bet;
 
             // Ball hit note at bottom
             const el = document.getElementById(`note-${index}`);
