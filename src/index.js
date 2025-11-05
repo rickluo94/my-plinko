@@ -728,7 +728,7 @@ function shotABall() {
   } else {
     balls -= wild;
     const shotLeft = 150;
-    const shotRight = 160;
+    const shotRight = 170;
     const shotWidth = shotRight - shotLeft;
     const x = Math.random() * shotWidth + shotLeft;
     const y = 100;
@@ -751,12 +751,19 @@ function shotABall() {
     clickSynth.triggerAttackRelease("32n", Tone.context.currentTime);
     Composite.add(engine.world, shot);
     // 給予 ｙ軸加速度
+    const yLeft = -0.0033;
+    const yRight = -0.0031;
+    const yWidth = Math.abs(yRight - yLeft);
+    const randomY = yLeft + Math.random() * (yRight - yLeft);
+    const xLeft = 0.003;
+    const xRight = 0.004;
+    const randomX = xLeft + Math.random() * (xRight - xLeft);
     Body.applyForce(shot, {
       x: shot.position.x,
       y: shot.position.y
     }, {
-      x: Math.random() * 0.002,
-      y: -0.003
+      x: randomX,
+      y: randomY
     });
   }
 }
@@ -918,6 +925,17 @@ Matter.Events.on(engine, "collisionStart", event => {
       const ballsWon = multipliers[index];
       console.log(`balls:${balls} + ballsWon:${ballsWon}`);
       balls += ballsWon;
+
+      // Ball hit note at bottom
+      const el = document.getElementById(`note-${index}`);
+      if (el.dataset.pressed !== "true") {
+        const note = notes[index];
+        note.play();
+        el.dataset.pressed = true;
+        setTimeout(() => {
+          el.dataset.pressed = false;
+        }, 500);
+      }
     }
   });
   checkCollision(event, "Peg", "Ball", (peg, ball) => {
