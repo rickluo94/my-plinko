@@ -1002,7 +1002,7 @@ for (let r = 0; r < 16; r++) {
             isStatic: true,
             label: "Peg",
             render: {
-                fillStyle: "#fff"
+                fillStyle: "#d7dae3"
             }
         });
         pegs.push(peg);
@@ -1010,6 +1010,76 @@ for (let r = 0; r < 16; r++) {
 }
 
 Composite.add(engine.world, pegs);
+
+// 建立矩形
+const boxA = Bodies.rectangle(170, 160, 5, 5, {
+    label: "RotatingBox",
+    isStatic: true,
+    render: {
+        fillStyle: "#d7dae3"
+    },
+    collisionFilter: {
+      group: -2
+    }
+});
+
+const boxB = Bodies.rectangle(170, 150, 50, 10, {
+    label: "RotatingBox",
+    frictionAir: 0.001,
+    chamfer: {
+        radius: [5,5,5,5]
+    },
+    render: {
+        fillStyle: "#d7dae3"
+    },
+    collisionFilter: {
+        group: -2
+    }
+});
+
+const boxRotate = Matter.Constraint.create({
+    bodyA: boxA,
+    // pointA: { x: 0, y: -50 },
+    bodyB: boxB,
+    length:0,
+    stiffness:0.9
+});
+
+// 建立矩形
+const boxC = Bodies.rectangle(450, 160, 5, 5, {
+    label: "RotatingBox",
+    isStatic: true,
+    render: {
+        fillStyle: "#d7dae3"
+    },
+    collisionFilter: {
+        group: -2
+    }
+});
+
+const boxD = Bodies.rectangle(450, 150, 50, 10, {
+    label: "RotatingBox",
+    frictionAir: 0.001,
+    chamfer: {
+        radius: [5,5,5,5]
+    },
+    render: {
+        fillStyle: "#d7dae3"
+    },
+    collisionFilter: {
+        group: -2
+    }
+});
+
+const boxRotate2 = Matter.Constraint.create({
+    bodyA: boxC,
+    // pointA: { x: 0, y: -50 },
+    bodyB: boxD,
+    length:0,
+    stiffness:0.9
+});
+
+Composite.add(engine.world, [boxA,boxB, boxC, boxD, boxRotate, boxRotate2]);
 
 // track animations for pegs
 const pegAnims = new Array(pegs.length).fill(null);
@@ -1021,20 +1091,32 @@ const ground = Bodies.rectangle(width / 2, height + 22, width * 2, 40, {
 });
 
 
-var wallLeftTop = Bodies.rectangle(70, (height - 530) / 2, 10, height, {
-    isStatic: true, label: "Wall Left"
+var wallLeftTop = Bodies.rectangle(60, (height - 555) / 2, 10, height, {
+    isStatic: true, label: "Wall Left",
+    chamfer: {
+        radius: [5,5,5,5]
+    },
 });
 
-var wallRightTop = Bodies.rectangle(width-70, (height - 530) / 2, 10, height, {
-    isStatic: true, label: "Wall Right"
+var wallRightTop = Bodies.rectangle(width-60, (height - 555) / 2, 10, height, {
+    isStatic: true, label: "Wall Right",
+    chamfer: {
+        radius: [5,5,5,5]
+    },
 });
 
 var wallLeft = Bodies.rectangle(-57, (height - 100) / 2, 10, height, {
-    isStatic: true, label: "Wall Left"
+    isStatic: true, label: "Wall Left",
+    chamfer: {
+        radius: [5,5,5,5]
+    },
 });
 
 var wallRight = Bodies.rectangle(width + 57, (height - 100) / 2, 10, height, {
-    isStatic: true, label: "Wall Right"
+    isStatic: true, label: "Wall Right",
+    chamfer: {
+        radius: [5,5,5,5]
+    },
 });
 
 
@@ -1100,7 +1182,6 @@ Matter.Events.on(engine, "collisionStart", (event) => {
         }
     });
 });
-
 
 
 // run the renderer
